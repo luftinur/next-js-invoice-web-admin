@@ -58,7 +58,7 @@ import {
 import { useState } from "react";
 import { Separator } from "@/components/ui/separator";
 
-const iconMap: Record<string, LucideIcon> = {
+export const iconMap: Record<string, LucideIcon> = {
   LayoutDashboard,
   FileText,
   FileSignature,

@@ -5,12 +5,19 @@ import { cn } from "@/lib/utils";
 import { useThemeStore } from "@/store/theme-store";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { mainNavigation } from "@/lib/navigation";
-import { FileText } from "lucide-react";
+import { mainNavigation, showcaseNavigation, secondaryNavigation } from "@/lib/navigation";
+import { FileText, type LucideIcon } from "lucide-react";
+import { iconMap } from "@/components/ui/sidebar";
 
 export function CompactLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const { density } = useThemeStore();
+
+  const isActive = (href: string) => {
+    if (href === "/dashboard" && pathname.startsWith("/dashboard"))
+      return true;
+    return pathname === href || pathname.startsWith(href + "/");
+  };
 
   return (
     <div className="flex min-h-screen">
@@ -24,23 +31,42 @@ export function CompactLayout({ children }: { children: React.ReactNode }) {
         </div>
         <nav className="flex-1 overflow-y-auto p-2">
           <ul className="space-y-1">
-            {mainNavigation.slice(0, 8).map((item) => {
-              const isActive = pathname.startsWith(item.href);
+            {mainNavigation.map((item) => {
+              const Icon = (iconMap[item.icon] || FileText) as LucideIcon;
+              const active = isActive(item.href);
               return (
                 <li key={item.label}>
                   <Link
                     href={item.href}
-                    title={item.label}
                     className={cn(
-                      "flex h-10 w-full items-center justify-center rounded-lg text-sm transition-colors",
-                      isActive
+                      "flex h-10 w-full items-center justify-center rounded-lg transition-colors",
+                      active
                         ? "bg-sidebar-accent text-sidebar-accent-foreground"
                         : "text-sidebar-foreground hover:bg-sidebar-accent/50"
                     )}
+                    title={item.label}
                   >
-                    <span className="text-xs font-medium leading-none tracking-tight [writing-mode:vertical-rl]">
-                      {item.label}
-                    </span>
+                    <Icon className="h-5 w-5 shrink-0" />
+                  </Link>
+                </li>
+              );
+            })}
+            {secondaryNavigation.map((item) => {
+              const Icon = (iconMap[item.icon] || FileText) as LucideIcon;
+              const active = isActive(item.href);
+              return (
+                <li key={item.label}>
+                  <Link
+                    href={item.href}
+                    className={cn(
+                      "flex h-10 w-full items-center justify-center rounded-lg transition-colors",
+                      active
+                        ? "bg-sidebar-accent text-sidebar-accent-foreground"
+                        : "text-sidebar-foreground hover:bg-sidebar-accent/50"
+                    )}
+                    title={item.label}
+                  >
+                    <Icon className="h-5 w-5 shrink-0" />
                   </Link>
                 </li>
               );
@@ -50,12 +76,7 @@ export function CompactLayout({ children }: { children: React.ReactNode }) {
       </aside>
       <main className="ml-16 flex flex-1 flex-col">
         <Header />
-        <div
-          className={cn(
-            "flex-1",
-            density === "compact" ? "p-3" : "p-4 lg:p-6"
-          )}
-        >
+        <div className={cn("flex-1", density === "compact" ? "p-3" : "p-4 lg:p-6")}>
           {children}
         </div>
       </main>
