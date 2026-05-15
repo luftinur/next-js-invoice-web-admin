@@ -1,12 +1,28 @@
 {
   "name": "next-js-invoice-web-admin",
-  "version": "0.1.0",
-  "private": true,
+  "version": "1.0.0",
+  "private": false,
+  "license": "MIT",
+  "description": "InvoiceCore — open-source admin dashboard theme built with Next.js 16, shadcn v4, and Tailwind v4. 45+ components, 50+ pages, RBAC, charts, tables, layouts.",
+  "keywords": ["admin", "dashboard", "nextjs", "react", "invoice", "shadcn", "tailwindcss", "admin-template", "typescript"],
+  "author": {
+    "name": "byluftinur",
+    "url": "https://luftinurfahmi.net"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/luftinur/next-js-invoice-web-admin.git"
+  },
+  "bugs": {
+    "url": "https://github.com/luftinur/next-js-invoice-web-admin/issues"
+  },
+  "homepage": "https://github.com/luftinur/next-js-invoice-web-admin#readme",
   "scripts": {
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "type-check": "tsc --noEmit"
   },
   "dependencies": {
     "@base-ui/react": "^1.4.1",
