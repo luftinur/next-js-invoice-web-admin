@@ -34,6 +34,8 @@ export interface PushChannelConfig {
   events: NotificationEvent[];
 }
 
+type PersistedState = Pick<NotificationChannelsState, "email" | "webhook" | "push">;
+
 interface NotificationChannelsState {
   email: EmailChannelConfig;
   webhook: WebhookChannelConfig;
@@ -101,7 +103,17 @@ export const useNotificationChannelsStore = create<NotificationChannelsState>()(
         return Math.random() > 0.1;
       },
     }),
-    { name: "invoicecore-notification-channels" }
+    {
+      name: "invoicecore-notification-channels",
+      partialize: (state) => {
+        const { email, webhook, push } = state;
+        return {
+          email: { ...email, smtpPass: "" },
+          webhook: { ...webhook, secret: "" },
+          push: { ...push, vapidPrivateKey: "" },
+        } satisfies PersistedState;
+      },
+    }
   )
 );
 

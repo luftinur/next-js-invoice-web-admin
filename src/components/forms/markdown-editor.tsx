@@ -1,9 +1,10 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { cn } from "@/lib/utils";
 import { Textarea } from "@/components/ui/textarea";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
+import DOMPurify from "dompurify";
 
 interface MarkdownEditorProps {
   value: string;
@@ -26,7 +27,7 @@ function renderMarkdown(md: string): string {
     .replace(/`(.+?)`/g, "<code>$1</code>")
     .replace(/^- (.+)$/gm, "<li>$1</li>")
     .replace(/(<li>.*<\/li>\n?)+/g, "<ul>$&</ul>")
-    .replace(/\[(.+?)\]\((.+?)\)/g, '<a href="$2" class="text-primary hover:underline">$1</a>')
+    .replace(/\[(.+?)\]\((.+?)\)/g, '<a href="$2" target="_blank" rel="noopener noreferrer">$1</a>')
     .replace(/\n\n/g, "</p><p>")
     .replace(/\n/g, "<br />");
   return `<p>${html}</p>`;
@@ -34,6 +35,11 @@ function renderMarkdown(md: string): string {
 
 export function MarkdownEditor({ value, onChange, placeholder, className }: MarkdownEditorProps) {
   const [preview, setPreview] = useState(false);
+
+  const sanitizedHtml = useMemo(() => {
+    if (!value) return '<span class="text-muted-foreground">Nothing to preview</span>';
+    return DOMPurify.sanitize(renderMarkdown(value));
+  }, [value]);
 
   return (
     <div className={cn("space-y-2", className)}>
@@ -50,7 +56,7 @@ export function MarkdownEditor({ value, onChange, placeholder, className }: Mark
       {preview ? (
         <div
           className="min-h-[200px] w-full rounded-lg border bg-transparent p-3 text-sm prose prose-sm max-w-none dark:prose-invert"
-          dangerouslySetInnerHTML={{ __html: value ? renderMarkdown(value) : '<span class="text-muted-foreground">Nothing to preview</span>' }}
+          dangerouslySetInnerHTML={{ __html: sanitizedHtml }}
         />
       ) : (
         <Textarea
